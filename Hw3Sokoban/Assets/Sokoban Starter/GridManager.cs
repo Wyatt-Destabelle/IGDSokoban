@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GridManager : MonoBehaviour
 {
-    public (int,GridObject)[,] gridMatrix;
+    public (int t,GridObject obj)[,] gridMatrix;
     int maxX, maxY;
     // Start is called before the first frame update
     void Start()
@@ -26,6 +26,7 @@ public class GridManager : MonoBehaviour
     */
     public bool requestMove(int x, int y, int moveX,int moveY, GridObject reqRef, int type)
     {
+
         if(x + moveX < 1 || x + moveX > maxX || y + moveY < 1 || y + moveY > maxY)
             return false;
 
@@ -50,14 +51,45 @@ public class GridManager : MonoBehaviour
         if(move)
         {
             //grab behind
-            //grab sides
-            
+
+
             gridMatrix[x+moveX,y+moveY] = (type,reqRef);
             reqRef.gridPosition =  new Vector2Int(x+moveX,y+moveY);
             gridMatrix[x,y] = (0,null);
 
-            // move behind
-            // move sides
+
+            if(Mathf.Abs(moveX) == 1)
+            {
+                if(1 <= y-1)
+                {
+                    if(gridMatrix[x,y-1].t == 3)
+                        requestMove(x, y-1, moveX,moveY, gridMatrix[x,y-1].obj,gridMatrix[x,y-1].t);
+                }
+                if(y+1 <= maxY)
+                {
+                    if(gridMatrix[x,y+1].t == 3)
+                        requestMove(x, y+1, moveX,moveY, gridMatrix[x,y+1].obj,gridMatrix[x,y+1].t);
+                }
+            }
+            else
+            {
+                if(1 <= x-1)
+                {
+                    if(gridMatrix[x-1,y].t == 3)
+                        requestMove(x-1, y, moveX,moveY, gridMatrix[x-1,y].obj,gridMatrix[x-1,y].t);
+                }
+                if(x+1 <= maxX)
+                {
+                    if(gridMatrix[x+1,y].t == 3)
+                        requestMove(x+1, y, moveX,moveY, gridMatrix[x+1,y].obj,gridMatrix[x+1,y].t);
+                }
+            }
+            if(0 <= x-moveX && x-moveX <= maxX && 0 <= y-moveY && y-moveY <= maxY)
+            {
+                if(gridMatrix[x-moveX,y-moveY].t == 3 || gridMatrix[x-moveX,y-moveY].t == 4)
+                    requestMove(x-moveX, y-moveY, moveX,moveY, gridMatrix[x-moveX,y-moveY].obj,gridMatrix[x-moveX,y-moveY].t);
+            }
+
         }
         return move;
     }
