@@ -13,7 +13,8 @@ public class GridManager : MonoBehaviour
         GridMaker g = GetComponent<GridMaker>();
         maxX = (int)g.dimensions.x;
         maxY = (int)g.dimensions.y;
-        gridMatrix = new (int,GridObject)[(int)g.dimensions.x +1,(int)g.dimensions.y + 1];
+        if(gridMatrix == null)
+            gridMake();
     }
     /*
     0 <- empty
@@ -28,19 +29,49 @@ public class GridManager : MonoBehaviour
         if(x + moveX < 1 || x + moveX > maxX || y + moveY < 1 || y + moveY > maxY)
             return false;
 
+
         (int t,GridObject r) targetTuple = gridMatrix[x+moveX,y+moveY];
+        bool move = false;
         if(targetTuple.t == 0)
         {
+            move = true;
+        }
+        if(targetTuple.t == 2 || targetTuple.t == 3)
+        {
+            if(requestMove(x+moveX, y+moveY, moveX,moveY, targetTuple.r, targetTuple.t))
+                move = true;
+            else
+                move = false;
+        }
+        if(targetTuple.t >= 4)
+        {
+            move = false;
+        }
+        if(move)
+        {
+            //grab behind
+            //grab sides
+            
             gridMatrix[x+moveX,y+moveY] = (type,reqRef);
             reqRef.gridPosition =  new Vector2Int(x+moveX,y+moveY);
             gridMatrix[x,y] = (0,null);
-            return true;
+
+            // move behind
+            // move sides
         }
-        return false;
+        return move;
+    }
+
+    void gridMake()
+    {
+        GridMaker g = GetComponent<GridMaker>();
+        gridMatrix = new (int,GridObject)[(int)g.dimensions.x +1,(int)g.dimensions.y + 1];
     }
 
     public void addBlock(int x, int y, GridObject reqRef, int type)
     {
+        if(gridMatrix == null)
+            gridMake();
         gridMatrix[x,y] = (type,reqRef);
     }
 }
