@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class playerBlock : MonoBehaviour
 {
-    public GridManager manager;
+    GridManager manager;
     GridObject gridInfo;
     // Start is called before the first frame update
     void Start()
     {
         gridInfo = GetComponent<GridObject>();
+        manager = FindObjectOfType<GridManager>();
     }
 
     // Update is called once per frame
